@@ -9,15 +9,21 @@ import { savePosts, loadPosts } from "./lib/storage";
 
 export default function Home() {
   const [posts, setPosts] = useState([]);
+  const [newPostId, setNewPostId] = useState(null);
 
   useEffect(() => {
     setPosts(loadPosts());
   }, []);
 
   const addPost = (text) => {
-    const newPosts = [{ text, id: Date.now() }, ...posts];
+    const id = Date.now();
+    const newPosts = [{ text, id }, ...posts];
     setPosts(newPosts);
     savePosts(newPosts);
+    setNewPostId(id);
+
+    // Remove highlight after 2 seconds
+    setTimeout(() => setNewPostId(null), 2000);
   };
 
   const deletePost = (id) => {
@@ -43,7 +49,11 @@ export default function Home() {
               transition={{ duration: 0.3 }}
               layout
             >
-              <Post data={post} onDelete={() => deletePost(post.id)} />
+              <Post
+                data={post}
+                onDelete={() => deletePost(post.id)}
+                highlight={post.id === newPostId}
+              />
             </motion.div>
           ))}
         </AnimatePresence>
