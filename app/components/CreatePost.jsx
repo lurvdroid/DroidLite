@@ -1,20 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function CreatePost({ addPost }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    if (!text) {
+      setIsTyping(false);
+      return;
+    }
+    setIsTyping(true);
+
+    const timeout = setTimeout(() => setIsTyping(false), 1000);
+
+    return () => clearTimeout(timeout);
+  }, [text]);
 
   const submit = () => {
     if (!text.trim()) return;
     setLoading(true);
 
-    // Simulate network delay (e.g., 1 second)
     setTimeout(() => {
       addPost(text);
       setText("");
       setLoading(false);
+      setIsTyping(false);
     }, 1000);
   };
 
@@ -57,6 +70,13 @@ export default function CreatePost({ addPost }) {
           "Post"
         )}
       </button>
+
+      {/* Typing Indicator */}
+      {isTyping && !loading && (
+        <p className="mt-2 text-sm italic text-gray-500 dark:text-gray-400">
+          User is typing...
+        </p>
+      )}
     </div>
   );
 }
