@@ -1,13 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
 
-export default function Post({ data, onDelete }) {
+export default function Post({ data, onDelete, highlight }) {
   const [liked, setLiked] = useState(false);
+  const controls = useAnimation();
+
+  useEffect(() => {
+    if (highlight) {
+      controls.start({
+        backgroundColor: ["#fef3c7", "#ffffff"], // Yellow to white
+        transition: { duration: 2 },
+      });
+    }
+  }, [highlight, controls]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow mt-3">
+    <motion.div
+      animate={controls}
+      className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow mt-3"
+    >
       <p className="font-semibold">@lurvdroid</p>
       <p className="my-2">{data.text}</p>
 
@@ -27,6 +40,6 @@ export default function Post({ data, onDelete }) {
           Delete
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
